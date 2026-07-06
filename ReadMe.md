@@ -10,7 +10,10 @@
   - `YandexGPT Lite`
 - `run_ragas_demo_test.py` — одиночный прогон одной модели с метриками `RAGAS`
 - `toxic_test.py` — отдельный judge-тест на токсичность и грубость
-- `docker-compose.yaml` — локальные `MLflow` и `Langfuse`
+- `seed_qdrant_demo.py` — загрузка демо-знаний в `Qdrant`
+- `run_rag_chat_demo.py` — интерактивный RAG-диалог с подробными retrieval-логами
+- `docker-compose.yaml` — локальные `MLflow`, `Langfuse` и `Qdrant`
+- `RAG_DEMO.md` — пошаговая инструкция по запуску простого RAG-демо
 
 ## Что проверяется
 
@@ -34,7 +37,7 @@
 
 ## Запуск локальных сервисов
 
-Поднять `MLflow` и `Langfuse`:
+Поднять локальные сервисы (`MLflow`, `Langfuse`, `Qdrant`):
 
 ```bash
 docker compose up -d
@@ -44,6 +47,7 @@ docker compose ps
 URL:
 - `MLflow`: `http://localhost:5001`
 - `Langfuse`: `http://localhost:3000`
+- `Qdrant`: `http://localhost:6333`
 
 ## Запуск тестов
 
@@ -72,6 +76,27 @@ URL:
 ./.venv/bin/python toxic_test.py
 ```
 
+## Простой RAG demo
+
+Для локального RAG-демо добавлены:
+
+- `Qdrant` в `docker-compose`
+- готовая база знаний по кредитным политикам
+- скрипт индексации в `Qdrant`
+- интерактивный диалоговый скрипт с логами по retrieval и ответу
+
+Быстрый сценарий:
+
+```bash
+docker compose up -d qdrant
+ollama serve
+ollama pull hf.co/Qwen/Qwen3-4B-GGUF:Q4_K_M
+ollama pull nomic-embed-text
+./.venv/bin/python run_rag_chat_demo.py --reindex
+```
+
+Подробная инструкция лежит в `RAG_DEMO.md`.
+
 ## Полезные команды
 
 Остановить локально загруженные модели `Ollama`:
@@ -86,7 +111,7 @@ ollama ps | awk 'NR>1 {print $1}' | xargs -n1 ollama stop
 docker compose down
 ```
 
-Полный сброс `Langfuse` и `MLflow`:
+Полный сброс `Langfuse`, `MLflow` и `Qdrant`:
 
 ```bash
 docker compose down -v
