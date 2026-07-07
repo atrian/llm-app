@@ -1,14 +1,15 @@
-# RAG demo в этом репозитории
+# RAG Demo
 
-Этот репозиторий изначально был набором локальных проверок LLM-моделей с `MLflow` и `Langfuse`. Для демо сюда добавлен отдельный простой RAG-сценарий на `Qdrant` + локальном `Ollama`.
+Папка с классическим локальным RAG-сценарием на `Qdrant` + `Ollama`.
 
-Что добавлено:
+Все команды ниже предполагают запуск из корня репозитория.
 
-- `qdrant` в [docker-compose.yaml](/Users/newuser/Documents/repo/llm-app/docker-compose.yaml)
-- [rag_demo_data/credit_policy_chunks.json](/Users/newuser/Documents/repo/llm-app/rag_demo_data/credit_policy_chunks.json) — готовая демо-база знаний по кредитным политикам
-- [seed_qdrant_demo.py](/Users/newuser/Documents/repo/llm-app/seed_qdrant_demo.py) — пересоздаёт коллекцию, показывает чанки и грузит их в `Qdrant`
-- [run_rag_chat_demo.py](/Users/newuser/Documents/repo/llm-app/run_rag_chat_demo.py) — запускает интерактивный RAG-диалог и подробно логирует retrieval
-- [rag_demo_common.py](/Users/newuser/Documents/repo/llm-app/rag_demo_common.py) — общая логика загрузки знаний, embeddings, Qdrant search и генерации ответа
+Что лежит здесь:
+
+- `data/credit_policy_chunks.json` — база знаний по кредитным политикам
+- `seed_qdrant_demo.py` — пересоздаёт коллекцию и загружает знания в `Qdrant`
+- `run_rag_chat_demo.py` — интерактивный RAG-чат с подробными retrieval-логами
+- `rag_demo_common.py` — общая логика embeddings, поиска и генерации ответа
 
 ## 1. Что это за demo
 
@@ -71,20 +72,20 @@ ollama pull nomic-embed-text
 
 ## 4. Как наполнить Qdrant знаниями
 
-Скрипт читает [rag_demo_data/credit_policy_chunks.json](/Users/newuser/Documents/repo/llm-app/rag_demo_data/credit_policy_chunks.json), печатает все чанки, делает embedding для каждого чанка через `Ollama`, пересоздаёт коллекцию `credit_policy_demo` и заливает точки в `Qdrant`.
+Скрипт читает `data/credit_policy_chunks.json`, печатает все чанки, делает embedding для каждого чанка через `Ollama`, пересоздаёт коллекцию `credit_policy_demo` и заливает точки в `Qdrant`.
 
 Важно: после последних правок retrieval стал гибридным, а embedding теперь строится не только по `text`, но и по `section/title/keywords`. Поэтому после обновления кода обязательно один раз сделай `--reindex`, иначе в `Qdrant` останутся старые вектора.
 
 Команда:
 
 ```bash
-./.venv/bin/python seed_qdrant_demo.py
+./.venv/bin/python -m rag.seed_qdrant_demo
 ```
 
 Если нужна другая коллекция:
 
 ```bash
-./.venv/bin/python seed_qdrant_demo.py --collection my_demo_collection
+./.venv/bin/python -m rag.seed_qdrant_demo --collection my_demo_collection
 ```
 
 Что видно в логах:
@@ -100,19 +101,19 @@ ollama pull nomic-embed-text
 Базовый запуск:
 
 ```bash
-./.venv/bin/python run_rag_chat_demo.py
+./.venv/bin/python -m rag.run_rag_chat_demo
 ```
 
 Самый удобный первый запуск с гарантированным переиндексированием:
 
 ```bash
-./.venv/bin/python run_rag_chat_demo.py --reindex
+./.venv/bin/python -m rag.run_rag_chat_demo --reindex
 ```
 
 Одноразовый запрос без интерактивного цикла:
 
 ```bash
-./.venv/bin/python run_rag_chat_demo.py --question "Можно ли погасить кредит досрочно?"
+./.venv/bin/python -m rag.run_rag_chat_demo --question "Можно ли погасить кредит досрочно?"
 ```
 
 Во время интерактивного диалога доступны команды:
@@ -123,7 +124,7 @@ ollama pull nomic-embed-text
 
 ## 6. Что именно логирует RAG-скрипт
 
-Для каждого вопроса [run_rag_chat_demo.py](/Users/newuser/Documents/repo/llm-app/run_rag_chat_demo.py) пишет в лог:
+Для каждого вопроса `run_rag_chat_demo.py` пишет в лог:
 
 - адрес `Qdrant`, имя коллекции, `top_k`, `score_threshold`
 - сколько vector-кандидатов берётся до rerank
@@ -172,19 +173,19 @@ ollama pull nomic-embed-text
 
 > Полное и частичное досрочное погашение доступно без комиссии в любой день действия договора. Минимальная сумма частичного досрочного погашения составляет 5 000 рублей.
 
-Полный список смотри в [rag_demo_data/credit_policy_chunks.json](/Users/newuser/Documents/repo/llm-app/rag_demo_data/credit_policy_chunks.json).
+Полный список смотри в `data/credit_policy_chunks.json`.
 
 
 Если машина слабая и важнее отзывчивость, можно временно заменить chat-модель:
 
 ```bash
-./.venv/bin/python run_rag_chat_demo.py --chat-model hf.co/Qwen/Qwen3-0.6B-GGUF:Q8_0
+./.venv/bin/python -m rag.run_rag_chat_demo --chat-model hf.co/Qwen/Qwen3-0.6B-GGUF:Q8_0
 ```
 
 Если важнее качество и хватает памяти, можно пробовать `8B`:
 
 ```bash
-./.venv/bin/python run_rag_chat_demo.py --chat-model hf.co/Qwen/Qwen3-8B-GGUF:Q4_K_M
+./.venv/bin/python -m rag.run_rag_chat_demo --chat-model hf.co/Qwen/Qwen3-8B-GGUF:Q4_K_M
 ```
 
 ## 9. Полезные переменные окружения
@@ -201,7 +202,7 @@ ollama pull nomic-embed-text
 Пример:
 
 ```bash
-RAG_TOP_K=5 ./.venv/bin/python run_rag_chat_demo.py
+RAG_TOP_K=5 ./.venv/bin/python -m rag.run_rag_chat_demo
 ```
 
 ## 10. Как остановить demo
@@ -223,4 +224,3 @@ docker compose down
 ```bash
 ollama ps | awk 'NR>1 {print $1}' | xargs -n1 ollama stop
 ```
-

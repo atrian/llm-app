@@ -15,11 +15,11 @@ from qdrant_client import QdrantClient
 from qdrant_client.http import models as qdrant_models
 
 
-load_dotenv()
+PACKAGE_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = PACKAGE_ROOT.parent
+load_dotenv(REPO_ROOT / ".env")
 
-
-PROJECT_ROOT = Path(__file__).resolve().parent
-DEFAULT_KNOWLEDGE_PATH = PROJECT_ROOT / "rag_demo_data" / "credit_policy_chunks.json"
+DEFAULT_KNOWLEDGE_PATH = PACKAGE_ROOT / "data" / "credit_policy_chunks.json"
 
 DEFAULT_OLLAMA_API_KEY = (os.getenv("OLLAMA_API_KEY") or "ollama").strip()
 DEFAULT_OLLAMA_BASE_URL = (os.getenv("OLLAMA_BASE_URL") or "http://localhost:11434/v1").strip()

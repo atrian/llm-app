@@ -3,7 +3,12 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from rag_demo_common import (
+if __package__ in {None, ""}:
+    import sys
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from rag.rag_demo_common import (
     DEFAULT_CHAT_MODEL,
     DEFAULT_EMBEDDING_MODEL,
     DEFAULT_KNOWLEDGE_PATH,

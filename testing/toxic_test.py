@@ -11,7 +11,10 @@ ENV:
 """
 
 from dotenv import load_dotenv
-load_dotenv()
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+load_dotenv(REPO_ROOT / ".env")
 
 import os, json, re
 from typing import List, Any, Dict
