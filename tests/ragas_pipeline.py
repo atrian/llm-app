@@ -84,6 +84,7 @@ DEFAULTS = {
     "EMBEDDING_BASE_URL": "http://localhost:11434/v1",
     "EMBEDDING_MODEL": "qwen3-embedding:8b",
     "EMBEDDING_API_KEY": "ollama",
+    "LOCAL_EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2",
     "GOLDENS_PATH": "tests/goldens.json",
     "RESULT_JSON_PATH": "tests/results/ragas_results.json",
     "RESULT_HTML_PATH": "tests/results/ragas_results.html",
@@ -173,9 +174,8 @@ def run_ragas_evaluation(df: pd.DataFrame) -> pd.DataFrame:
     eval_base_url = env("EVAL_BASE_URL")
     eval_api_key = env("EVAL_API_KEY")
 
+    emb_provider = env("EMBEDDING_PROVIDER").lower()
     emb_model = env("EMBEDDING_MODEL")
-    emb_base_url = env("EMBEDDING_BASE_URL")
-    emb_api_key = env("EMBEDDING_API_KEY")
 
     evaluator_llm = LangchainLLMWrapper(
         ChatOpenAI(
@@ -186,12 +186,21 @@ def run_ragas_evaluation(df: pd.DataFrame) -> pd.DataFrame:
         )
     )
 
-    evaluator_embeddings = LcOpenAIEmbeddings(
-        model=emb_model,
-        api_key=emb_api_key,
-        base_url=emb_base_url,
-        check_embedding_ctx_length=False,
-    )
+    if emb_provider == "local":
+        from langchain_huggingface import HuggingFaceEmbeddings
+
+        local_model = env("LOCAL_EMBEDDING_MODEL")
+        log.info("Используются локальные embeddings: %s", local_model)
+        evaluator_embeddings = HuggingFaceEmbeddings(model_name=local_model)
+    else:
+        emb_base_url = env("EMBEDDING_BASE_URL")
+        emb_api_key = env("EMBEDDING_API_KEY")
+        evaluator_embeddings = LcOpenAIEmbeddings(
+            model=emb_model,
+            api_key=emb_api_key,
+            base_url=emb_base_url,
+            check_embedding_ctx_length=False,
+        )
 
     hf_ds = Dataset.from_pandas(
         df[["question", "answer", "contexts", "ground_truth"]]
@@ -200,8 +209,9 @@ def run_ragas_evaluation(df: pd.DataFrame) -> pd.DataFrame:
     metrics = [Faithfulness(), AnswerRelevancy(), ContextRecall()]
 
     log.info(
-        "Ragas config: eval_model=%s, emb_model=%s, rows=%d",
+        "Ragas config: eval_model=%s, emb_provider=%s, emb_model=%s, rows=%d",
         eval_model,
+        emb_provider,
         emb_model,
         len(hf_ds),
     )

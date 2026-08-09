@@ -184,7 +184,8 @@ pytest tests/ -v
 ### Переменные окружения
 
 Все провайдеры используют OpenAI-compatible API. Значения по умолчанию —
-локальный Ollama:
+
+локальный Ollama для локальной разработки, OpenRouter — для CI:
 
 | Переменная            | Назначение              | По умолчанию              |
 |-----------------------|-------------------------|---------------------------|
@@ -195,16 +196,22 @@ pytest tests/ -v
 | `EMBEDDING_BASE_URL`  | URL embedding-модели    | `http://localhost:11434/v1` |
 | `EMBEDDING_MODEL`     | Embedding-модель        | `qwen3-embedding:8b`      |
 
+В CI все эти переменные переопределяются: target и judge через OpenRouter
+(deepseek/deepseek-v4-flash), embeddings — локальные
+(sentence-transformers/all-MiniLM-L6-v2).
+
 ### CI/CD
 
 Workflow `.github/workflows/cicd-ragas.yml` запускается на push/PR в ветки
-`hw9-cicd-ragas` и `main`. Схема работы:
+`hw9-cicd-ragas` и `main`. Все провайдеры (target, judge, embeddings) работают
+через OpenRouter — нужен только один секрет `OPENROUTER_API_KEY`. Никаких
+service-контейнеров и локальных моделей.
 
-1. Поднимается service-контейнер `ollama/ollama`
-2. Устанавливаются Python-зависимости
-3.Pullятся модели `qwen2.5:3b` + `nomic-embed-text`
-4. Запускается `pytest tests/ -v` — quality gate падает, если любая метрика ниже порога
-5. Артефакты (JSON/HTML отчёты) загружаются и хранятся 30 дней
+Схема работы:
+
+1. Устанавливаются Python-зависимости
+2. Запускается `pytest tests/ -v` — quality gate падает, если любая метрика ниже порога
+3. Артефакты (JSON/HTML отчёты) загружаются и хранятся 30 дней
 
 Quality gate: пайплайн завершается ошибкой, если:
 
