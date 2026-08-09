@@ -4,13 +4,13 @@ on:
   pull_request:
     branches: ["main", "hw9-cicd-ragas"]
   push:
-    branches: ["hw9-cicd-ragas"]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
   ragas-quality-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     env:
       # Target-модель и judge — OpenRouter
