@@ -1,0 +1,85 @@
+name: Ragas CI/CD
+
+on:
+  pull_request:
+    branches: ["main", "hw9-cicd-ragas"]
+  push:
+    branches: ["hw9-cicd-ragas"]
+  workflow_dispatch:
+
+jobs:
+  ragas-quality-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      # Все провайдеры по умолчанию используют Ollama,
+      # который поднимается в service-контейнере ниже.
+      TARGET_BASE_URL: "http://localhost:11434/v1"
+      TARGET_API_KEY: "ollama"
+      TARGET_MODEL: "qwen2.5:3b"
+      EVAL_BASE_URL: "http://localhost:11434/v1"
+      EVAL_API_KEY: "ollama"
+      EVAL_MODEL: "qwen2.5:3b"
+      EMBEDDING_BASE_URL: "http://localhost:11434/v1"
+      EMBEDDING_API_KEY: "ollama"
+      EMBEDDING_MODEL: "nomic-embed-text"
+
+      # Quality gates — пороги метрик Ragas
+      THRESH_FAITHFULNESS: "0.70"
+      THRESH_ANSWER_RELEVANCY: "0.30"
+      THRESH_CONTEXT_RECALL: "0.70"
+
+    services:
+      ollama:
+        image: ollama/ollama:latest
+        ports:
+          - 11434:11434
+        options: >-
+          --health-cmd "curl -f http://localhost:11434/api/tags || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Pull Ollama models
+        run: |
+          ollama pull qwen2.5:3b
+          ollama pull nomic-embed-text
+
+      - name: Wait for Ollama readiness
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:11434/api/tags > /dev/null 2>&1; then
+              echo "Ollama is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Ollama did not become ready"
+          exit 1
+
+      - name: Run Ragas quality-gate tests
+        run: |
+          pytest tests/ -v --tb=short
+
+      - name: Upload Ragas reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ragas-reports
+          path: tests/results/
+          retention-days: 30

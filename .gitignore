@@ -4,3 +4,4 @@ llm-venv
 __pycache__/
 .ipynb_checkpoints/
 models/
+tests/results/
