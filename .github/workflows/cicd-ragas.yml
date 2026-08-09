@@ -13,17 +13,19 @@ jobs:
     timeout-minutes: 30
 
     env:
-      # Все провайдеры по умолчанию используют Ollama,
-      # который поднимается в service-контейнере ниже.
+      # Target-модель и embeddings — локальный Ollama (service container)
       TARGET_BASE_URL: "http://localhost:11434/v1"
       TARGET_API_KEY: "ollama"
       TARGET_MODEL: "qwen2.5:3b"
-      EVAL_BASE_URL: "http://localhost:11434/v1"
-      EVAL_API_KEY: "ollama"
-      EVAL_MODEL: "qwen2.5:3b"
+
       EMBEDDING_BASE_URL: "http://localhost:11434/v1"
       EMBEDDING_API_KEY: "ollama"
       EMBEDDING_MODEL: "nomic-embed-text"
+
+      # Judge (evaluator LLM) — OpenRouter: стабильные метрики Ragas
+      EVAL_BASE_URL: "https://openrouter.ai/api/v1"
+      EVAL_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      EVAL_MODEL: "deepseek/deepseek-v4-flash"
 
       # Quality gates — пороги метрик Ragas
       THRESH_FAITHFULNESS: "0.70"
