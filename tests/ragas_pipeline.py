@@ -183,6 +183,7 @@ def run_ragas_evaluation(df: pd.DataFrame) -> pd.DataFrame:
             temperature=0,
             api_key=eval_api_key,
             base_url=eval_base_url,
+            request_timeout=60,
         )
     )
 
@@ -223,7 +224,7 @@ def run_ragas_evaluation(df: pd.DataFrame) -> pd.DataFrame:
         embeddings=evaluator_embeddings,
         show_progress=True,
         raise_exceptions=False,
-        batch_size=4,
+        batch_size=16,
     )
 
     try:
