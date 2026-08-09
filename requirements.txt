@@ -35,6 +35,10 @@ openai==1.107.3
 ragas==0.4.3
 datasets==4.0.0
 evaluate==0.4.2
+langchain-huggingface==0.1.2
+
+# ===== Testing =====
+pytest==8.3.4
 
 # ===== Monitoring =====
 prometheus-fastapi-instrumentator==6.1.0

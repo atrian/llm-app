@@ -1,0 +1,58 @@
+name: Ragas CI/CD
+
+on:
+  pull_request:
+    branches: ["main", "hw9-cicd-ragas"]
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  ragas-quality-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      # Target-модель и judge — OpenRouter
+      TARGET_BASE_URL: "https://openrouter.ai/api/v1"
+      TARGET_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      TARGET_MODEL: "deepseek/deepseek-v4-flash"
+
+      EVAL_BASE_URL: "https://openrouter.ai/api/v1"
+      EVAL_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      EVAL_MODEL: "deepseek/deepseek-v4-flash"
+
+      # Embeddings — локальные sentence-transformers (CPU, без API)
+      EMBEDDING_PROVIDER: "local"
+      LOCAL_EMBEDDING_MODEL: "sentence-transformers/all-MiniLM-L6-v2"
+
+      # Quality gates — пороги метрик Ragas
+      THRESH_FAITHFULNESS: "0.70"
+      THRESH_ANSWER_RELEVANCY: "0.30"
+      THRESH_CONTEXT_RECALL: "0.70"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Ragas quality-gate tests
+        run: |
+          pytest tests/ -v --tb=short
+
+      - name: Upload Ragas reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ragas-reports
+          path: tests/results/
+          retention-days: 30
