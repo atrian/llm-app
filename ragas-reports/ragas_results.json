@@ -1,0 +1,192 @@
+{
+  "target_model": "deepseek/deepseek-v4-flash",
+  "eval_model": "deepseek/deepseek-v4-flash",
+  "embedding_model": "qwen3-embedding:8b",
+  "summary": {
+    "faithfulness": 0.8666666666666667,
+    "answer_relevancy": 0.3082418397621145,
+    "context_recall": 1.0
+  },
+  "cases": [
+    {
+      "id": "G-001",
+      "category": "factual",
+      "question": "Какие кредитные продукты доступны в North Star Credit?",
+      "answer": "Кредит наличными, POS-кредит и рефинансирование.",
+      "ground_truth": "Кредит наличными (50 000 – 1 500 000 ₽), POS-кредит (10 000 – 300 000 ₽) и рефинансирование (100 000 – 2 000 000 ₽).",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.2342322051288567,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-002",
+      "category": "factual",
+      "question": "Какой возрастной диапазон для получения кредита?",
+      "answer": "Возрастной диапазон: от 23 до 65 лет на дату погашения кредита.",
+      "ground_truth": "От 23 до 65 лет на дату погашения кредита.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9216528731568194,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-003",
+      "category": "factual",
+      "question": "Какой минимальный доход нужен для городов-миллионников?",
+      "answer": "Минимальный доход для городов-миллионников — 45 000 рублей в месяц.",
+      "ground_truth": "Не ниже 45 000 рублей в месяц.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.025343152776429668,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-004",
+      "category": "factual",
+      "question": "Какие документы входят в базовый пакет?",
+      "answer": "Паспорт РФ и селфи с открытым паспортом.",
+      "ground_truth": "Паспорт РФ и селфи с открытым паспортом.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7924812012592906,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-005",
+      "category": "factual",
+      "question": "При каком значении PTI заявка отклоняется автоматически?",
+      "answer": "При превышении 60 процентов.",
+      "ground_truth": "При PTI выше 60 процентов.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-006",
+      "category": "factual",
+      "question": "Какой SLA ручной проверки андеррайтером?",
+      "answer": "До 2 рабочих часов в будни с 09:00 до 18:00 по Москве.",
+      "ground_truth": "До 2 рабочих часов в будни с 09:00 до 18:00 по Москве.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": -0.010163820637938099,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-007",
+      "category": "factual",
+      "question": "Какая ставка для зарплатных клиентов?",
+      "answer": "Для зарплатных клиентов ставка составляет от 12.9 до 21.9 процента годовых.",
+      "ground_truth": "От 12.9 до 21.9 процента годовых.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.963387376659276,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-008",
+      "category": "factual",
+      "question": "Сколько действует одобренная оферта?",
+      "answer": "5 календарных дней.",
+      "ground_truth": "5 календарных дней.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": -0.0696808786554474,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-009",
+      "category": "factual",
+      "question": "Что происходит с POS-кредитом, если партнёр не подтверждает товар?",
+      "answer": "Если партнёр не подтверждает товар в течение 24 часов, одобрение по POS-кредиту аннулируется автоматически.",
+      "ground_truth": "Одобрение аннулируется автоматически через 24 часа.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7931873799688075,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-010",
+      "category": "factual",
+      "question": "Какая минимальная сумма частичного досрочного погашения?",
+      "answer": "Минимальная сумма частичного досрочного погашения составляет 5 000 рублей.",
+      "ground_truth": "5 000 рублей.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.03353195077017,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-011",
+      "category": "factual",
+      "question": "Когда доступна реструктуризация?",
+      "answer": "Программа реструктуризации доступна после трёх успешно внесённых ежемесячных платежей.",
+      "ground_truth": "После трёх успешно внесённых ежемесячных платежей.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.16959328508554883,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-012",
+      "category": "factual",
+      "question": "Какой штраф за просрочку платежа?",
+      "answer": "0.1% от суммы просроченного платежа за каждый день, но не более 20% от суммы этого платежа.",
+      "ground_truth": "0.1 процента от суммы просроченного платежа за каждый день, но не больше 20 процентов от суммы этого платежа.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7700628709199038,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-013",
+      "category": "negative",
+      "question": "Какой максимальный лимит по карте рассрочки?",
+      "answer": "В предоставленном контексте нет информации.",
+      "ground_truth": "В предоставленном контексте нет информации о карте рассрочки.",
+      "metrics": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-014",
+      "category": "negative",
+      "question": "Можно ли оформить ипотеку через North Star Credit?",
+      "answer": "В предоставленном контексте нет информации.",
+      "ground_truth": "В предоставленном контексте нет информации об ипотеке.",
+      "metrics": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_recall": 1.0
+      }
+    },
+    {
+      "id": "G-015",
+      "category": "negative",
+      "question": "Какая комиссия за снятие наличных с дебетовой карты?",
+      "answer": "В предоставленном контексте нет информации.",
+      "ground_truth": "В предоставленном контексте нет информации о комиссии за снятие наличных.",
+      "metrics": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_recall": 1.0
+      }
+    }
+  ]
+}
